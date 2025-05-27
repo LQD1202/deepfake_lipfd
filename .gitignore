@@ -10,3 +10,4 @@ ai/trainer/__pycache__
 models/ckpt.pth
 android
 ai/models/clip/__pycache__
+ai/yolov5face/models/__pycache__
