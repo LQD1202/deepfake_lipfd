@@ -1,4 +1,4 @@
-*/__pycache__
+__pycache__
 ai/models/__pycache__
 ai/trainer/__pycache__
 ai/yolov5face/weights
@@ -9,3 +9,4 @@ ai/options/__pycache__
 ai/trainer/__pycache__
 models/ckpt.pth
 android
+ai/models/clip/__pycache__
