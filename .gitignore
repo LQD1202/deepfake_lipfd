@@ -7,7 +7,7 @@ ai/yolov5face/6397977490321845480.mp4
 ai/data/__pycache__
 ai/options/__pycache__
 ai/trainer/__pycache__
-models/ckpt.pth
+models_cpkt
 android
 ai/models/clip/__pycache__
 ai/yolov5face/models/__pycache__
