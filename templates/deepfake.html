@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DeepFake Realtime</title>
+</head>
+<body style="
+  margin: 0;
+  padding: 0;
+  background-image: url('/static/images/background.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  font-family: sans-serif;
+">
+
+  <h2 style="color: white;">Realtime DeepFake trên màn hình đang quay</h2>
+
+  <div style="margin-bottom: 10px;">
+    <button onclick="startRecording()">🟢 Bắt đầu quay màn hình</button>
+    <button onclick="stopRecording()" id="stopBtn" style="display:none;">⏹ Dừng quay</button>
+    <span id="recordTimer" style="color: yellow; font-weight: bold; margin-left: 15px;"></span>
+  </div>
+
+  <div style="margin-top: 15px; display: flex; gap: 10px;">
+    <video id="liveVideo" autoplay muted style="max-width: 400px; border: 3px solid blue; display: none;"></video>
+    <video id="recordedVideo" controls style="max-width: 400px; border: 3px solid gray; display: none;"></video>
+    <video id="cutVideo" controls style="max-width: 400px; border: 3px solid green; display: none;"></video>
+  </div>
+  <div>
+    <audio id="audioPlayer" controls style="display: none; margin-top: 10px;"></audio>  
+  </div>
+  <div id="resultText" style="white-space: pre-line; font-size: 16px; font-weight: bold; margin-top: 20px; padding: 15px; color: white; background-color: #333; text-align: center; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>
+
+  <script>
+    let mediaRecorder;
+    let recordedChunks = [];
+    let recordInterval;
+    let recordSeconds = 0;
+
+    async function startRecording() {
+      try {
+        const displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        const combinedStream = new MediaStream([
+          ...displayStream.getVideoTracks(),
+          ...micStream.getAudioTracks()
+        ]);
+
+        const liveVideo = document.getElementById('liveVideo');
+        liveVideo.srcObject = combinedStream;
+        liveVideo.style.display = 'block';
+        await liveVideo.play();
+
+        mediaRecorder = new MediaRecorder(combinedStream);
+        recordedChunks = [];
+
+        mediaRecorder.ondataavailable = event => {
+          if (event.data.size > 0) recordedChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          clearInterval(recordInterval);
+          document.getElementById("recordTimer").innerText = "";
+
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          const url = URL.createObjectURL(blob);
+          const recordedVideo = document.getElementById('recordedVideo');
+          recordedVideo.src = url;
+          recordedVideo.style.display = 'block';
+
+          const formData = new FormData();
+          formData.append("video", blob, "recorded.webm");
+
+          document.getElementById("resultText").innerText = "⏳ Đang xử lý video...";
+
+          try {
+            const response = await fetch("/process_ai", {
+              method: "POST",
+              body: formData
+            });
+
+            const data = await response.json();
+            console.log("Kết quả từ backend:", data);
+
+            let resultText = data.result_text;
+            if (data.ai_processing_time) {
+              resultText += `\n⏱️ AI xử lý trong ${data.ai_processing_time} giây`;
+            }
+            document.getElementById("resultText").innerText = resultText;
+
+            // ✅ Load và hiển thị video
+            const cutVideo = document.getElementById("cutVideo");
+            const videoUrl = data.video_url + "?v=" + Date.now();
+            console.log("🎬 Video URL:", videoUrl);
+            cutVideo.src = videoUrl;
+            cutVideo.style.display = "block";
+            cutVideo.load();
+
+            // ✅ Load và hiển thị audio nếu có
+            if (data.audio_url) {
+              const audioPlayer = document.getElementById("audioPlayer");
+              const audioUrl = data.audio_url + "?v=" + Date.now();
+              console.log("🔊 Audio URL:", audioUrl);
+              audioPlayer.src = audioUrl;
+              audioPlayer.style.display = "block";
+              audioPlayer.load();
+            }
+
+          } catch (err) {
+            console.error("❌ Lỗi khi gửi video:", err);
+            document.getElementById("resultText").innerText = "❌ Lỗi khi xử lý video.";
+          }
+        };
+
+        mediaRecorder.start();
+        document.getElementById("stopBtn").style.display = "inline-block";
+        document.getElementById("resultText").innerText = "🔴 Đang ghi màn hình...";
+
+        recordSeconds = 0;
+        document.getElementById("recordTimer").innerText = "⏱ 0 giây";
+        recordInterval = setInterval(() => {
+          recordSeconds++;
+          document.getElementById("recordTimer").innerText = `⏱ ${recordSeconds} giây`;
+        }, 1000);
+
+      } catch (err) {
+        console.error("Lỗi khi lấy màn hình:", err);
+        document.getElementById("resultText").innerText = "❌ Không thể lấy màn hình hoặc micro.";
+      }
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+        document.getElementById("stopBtn").style.display = "none";
+        document.getElementById("resultText").innerText = "📤 Đang upload video...";
+      }
+    }
+  </script>
+</body>
+</html>

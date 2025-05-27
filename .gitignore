@@ -1,0 +1,9 @@
+*/__pycache__
+ai/models/__pycache__
+ai/trainer/__pycache__
+ai/yolov5face/weights
+ai/yolov5face/__pycache__
+ai/yolov5face/6397977490321845480.mp4
+ai/data/__pycache__
+ai/options/__pycache__
+ai/trainer/__pycache__
