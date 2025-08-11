@@ -10,8 +10,8 @@ import os
 if __name__ == "__main__":  # 🔥 QUAN TRỌNG: Bọc toàn bộ code trong đây!
 
     # Paths to training data
-    real_path = "/media/hoangtv/0f9d3910-0ff9-406c-92e1-c2c8170ca6f41/Dat/lip_av/LipFD_w_temporal/datasets/0_real"
-    fake_path = "/media/hoangtv/0f9d3910-0ff9-406c-92e1-c2c8170ca6f41/Dat/lip_av/LipFD_w_temporal/datasets/1_fake"
+    real_path = "./datasets/0_real"
+    fake_path = "./datasets/1_fake"
 
     # Labeling images
     real_imgs = [(os.path.join(real_path, f), 0) for f in sorted(os.listdir(real_path))]
@@ -21,8 +21,8 @@ if __name__ == "__main__":  # 🔥 QUAN TRỌNG: Bọc toàn bộ code trong đ�
     train_data = real_imgs + fake_imgs
 
     # Paths to validation data
-    real_path_val = "/media/hoangtv/0f9d3910-0ff9-406c-92e1-c2c8170ca6f41/Dat/lip_av/mobilenetv3.pytorch/val/0_real"
-    fake_path_val = "/media/hoangtv/0f9d3910-0ff9-406c-92e1-c2c8170ca6f41/Dat/lip_av/mobilenetv3.pytorch/val/1_fake"
+    real_path_val = "./val/0_real"
+    fake_path_val = "./val/1_fake"
 
     # Labeling validation images
     real_imgs_val = [(os.path.join(real_path_val, f), 0) for f in sorted(os.listdir(real_path_val))]

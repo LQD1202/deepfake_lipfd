@@ -11,8 +11,8 @@ import os
 if __name__ == "__main__":  # 🔥 QUAN TRỌNG: Bọc toàn bộ code trong đây!
 
     # Paths to training data
-    real_path = 
-    fake_path = 
+    real_path = "./train/0_real"
+    fake_path = "./train/1_fake"
 
     # Labeling images
     real_imgs = [(os.path.join(real_path, f), 0) for f in sorted(os.listdir(real_path))]
@@ -22,8 +22,8 @@ if __name__ == "__main__":  # 🔥 QUAN TRỌNG: Bọc toàn bộ code trong đ�
     train_data = real_imgs + fake_imgs
 
     # Paths to validation data
-    real_path_val = 
-    fake_path_val = 
+    real_path_val = "./val/0_real"
+    fake_path_val = "./val/0_real"
 
     # Labeling validation images
     real_imgs_val = [(os.path.join(real_path_val, f), 0) for f in sorted(os.listdir(real_path_val))]
