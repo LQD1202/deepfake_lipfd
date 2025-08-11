@@ -65,8 +65,6 @@ The data sample is showed as follow, and **the fully processed dataset is approx
 
 ## :tada: Validation
 
-- Download our [pertained weights](https://drive.google.com/file/d/1NPAcx0QS8N9v_9qUr-51jBaL9kGDT-cp/view?usp=share_link) and save it in to `checkpoints/ckpt.pth`. 
-
 - Download [validation set](https://drive.google.com/file/d/1gZjzps5_rbr6CeBqBke8l2Gs8xXx_Ctb/view?usp=share_link) and extract it into `datasets/val`.
 
 ~~~bash
